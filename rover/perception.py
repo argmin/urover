@@ -98,15 +98,15 @@ def perception_step(Rover):
     # 3) Apply color threshold to identify navigable terrain/obstacles/rock samples
     obstacle_threshold_img = color_thresh(warped_img, ((0, 70),(0, 70),(0, 50)))
     rock_threshold_img = color_thresh(warped_img, ((140, 255),(110, 255),(0, 50)))
-    navigable_threshold_img = color_thresh(warped_img, ((180, 255),(180, 255),(180, 255)))
+    navigable_threshold_img = color_thresh(warped_img, ((180, 255),(180, 255),(160, 255)))
 
     # 4) Update Rover.vision_image (this will be displayed on left side of screen)
         # Example: Rover.vision_image[:,:,0] = obstacle color-thresholded binary image
         #          Rover.vision_image[:,:,1] = rock_sample color-thresholded binary image
         #          Rover.vision_image[:,:,2] = navigable terrain color-thresholded binary image
-    Rover.vision_image[:,:,0] = obstacle_threshold_img
-    Rover.vision_image[:,:,1] = rock_threshold_img
-    Rover.vision_image[:,:,2] = navigable_threshold_img
+    Rover.vision_image[:,:,0] = obstacle_threshold_img * 255
+    Rover.vision_image[:,:,1] = rock_threshold_img * 255
+    Rover.vision_image[:,:,2] = navigable_threshold_img * 255
 
     # 5) Convert map image pixel values to rover-centric coords
     obstacle_xpix, obstacle_ypix = rover_coords(obstacle_threshold_img)
@@ -130,8 +130,15 @@ def perception_step(Rover):
     # Update Rover pixel distances and angles
         # Rover.nav_dists = rover_centric_pixel_distances
         # Rover.nav_angles = rover_centric_angles
-    dist, angle = to_polar_coords(navigable_xpix, navigable_ypix)
-    Rover.nav_dists = dist
-    Rover.nav_angles = angle
+    n_dist, n_angle = to_polar_coords(navigable_xpix, navigable_ypix)
+    o_dist, o_angle = to_polar_coords(obstacle_xpix, obstacle_ypix)
+    r_dist, r_angle = to_polar_coords(rock_xpix, rock_ypix)
+
+    Rover.nav_dists = n_dist
+    Rover.nav_angles = n_angle
+    Rover.o_dists = o_dist
+    Rover.o_angles = o_angle
+    Rover.r_dists = r_dist
+    Rover.r_angles = r_angle
     
     return Rover
