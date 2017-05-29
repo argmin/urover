@@ -101,18 +101,22 @@ def decision_step(Rover):
         # Check for Rover.mode status
         if Rover.mode == 'pickup':
             if Rover.r_angles is not None and len(Rover.r_angles) > 0 and not np.isnan(np.mean(Rover.r_angles)):
-                Rover.steer = np.clip(np.mean(Rover.r_angles * 180/np.pi), -8, -8)
+                Rover.steer = np.clip(np.mean(Rover.r_angles * 180/np.pi), -15, 15)
+                Rover.steer_dir = 1 if Rover.steer > 0 else -1
+                Rover = throttle_control(Rover, 1)
                 Rover = pickup(Rover)
             else:
                 Rover.mode = 'forward'
         if Rover.mode == 'forward':
             if Rover.r_angles is not None and len(Rover.r_angles) > 0 and not np.isnan(np.mean(Rover.r_angles)):
                 Rover.steer = np.clip(np.mean(Rover.r_angles * 180/np.pi), -15, 15)
+                Rover = brake_control(Rover, True)
                 Rover.mode = 'pickup'
             elif len(Rover.nav_angles) >= Rover.stop_forward:
-                Rover = throttle_control(Rover, 1)
+                Rover = throttle_control(Rover, 1.5)
                 # Set steering to average angle clipped to the range +/- 15
                 Rover.steer = np.clip(np.mean(Rover.nav_angles * 180/np.pi), -15, 15)
+                Rover.steer_dir = 1 if Rover.steer > 0 else -1
             # If there's a lack of navigable terrain pixels then go to 'stop' mode
             elif len(Rover.nav_angles) < Rover.stop_forward:
                 Rover = brake_control(Rover, False)
@@ -129,11 +133,11 @@ def decision_step(Rover):
                 if len(Rover.nav_angles) < Rover.go_forward:
                     Rover = brake_control(Rover, False)
                     # Turn range is +/- 15 degrees, when stopped the next line will induce 4-wheel turning
-                    Rover.steer = 15 # Could be more clever here about which way to turn
+                    Rover.steer = -15 if Rover.steer_dir > 0 else 15
                 # If we're stopped but see sufficient navigable terrain in front then go!
                 if len(Rover.nav_angles) >= Rover.go_forward:
                     # Set throttle back to stored value
-                    Rover = throttle_control(Rover, 1)
+                    Rover = throttle_control(Rover, 1.5)
                     # Set steer to mean angle
                     Rover.steer = np.clip(np.mean(Rover.nav_angles * 180/np.pi), -15, 15)
                     Rover.mode = 'forward'
