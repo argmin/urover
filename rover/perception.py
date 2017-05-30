@@ -78,7 +78,7 @@ def perspect_transform(img, src, dst):
 def perception_step(Rover):
     # Perform perception steps to update Rover()
     img = Rover.img
-    scale = 10
+    scale = 30
     # 1) Define source and destination points for perspective transform
     source = np.float32([[14, 139], [300, 139], [200, 96], [118, 96]])
     dist = 5
