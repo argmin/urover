@@ -123,9 +123,11 @@ def create_output_images(Rover):
             cv2.FONT_HERSHEY_COMPLEX, 0.4, (255, 255, 255), 1)
     cv2.putText(map_add,"Fidelity: "+str(fidelity)+'%', (0, 40), 
             cv2.FONT_HERSHEY_COMPLEX, 0.4, (255, 255, 255), 1)
-    cv2.putText(map_add,"Rocks Found: "+str(np.sum(Rover.samples_found)), (0, 55), 
+    cv2.putText(map_add,"Rocks Detected: "+str(np.sum(Rover.samples_found)), (0, 55), 
             cv2.FONT_HERSHEY_COMPLEX, 0.4, (255, 255, 255), 1)
     cv2.putText(map_add,"Mode: "+str(Rover.mode), (0, 75), 
+            cv2.FONT_HERSHEY_COMPLEX, 0.4, (255, 255, 255), 1)
+    cv2.putText(map_add,"Rocks Collected: "+str(Rover.rocks_collected), (0, 90), 
             cv2.FONT_HERSHEY_COMPLEX, 0.4, (255, 255, 255), 1)
 
     # Print for the sake of humanity

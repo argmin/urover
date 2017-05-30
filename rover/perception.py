@@ -3,7 +3,7 @@ import cv2
 
 # Identify pixels above the threshold
 # Threshold of RGB > 160 does a nice job of identifying ground pixels only
-def color_thresh(img, rgb_thresh=((140, 255), (140, 255), (0, 255))):
+def color_thresh(img, rgb_thresh=((180, 255), (180, 255), (160, 255))):
     # Create an array of zeros same xy size as img, but single channel
     color_select = np.zeros_like(img[:,:,0])
     # Require that each pixel be above all three threshold values in RGB
@@ -26,7 +26,6 @@ def rover_coords(binary_img):
     x_pixel = np.absolute(ypos - binary_img.shape[0]).astype(np.float)
     y_pixel = -(xpos - binary_img.shape[0]).astype(np.float)
     return x_pixel, y_pixel
-
 
 # Define a function to convert to radial coords in rover space
 def to_polar_coords(x_pixel, y_pixel):
@@ -71,12 +70,9 @@ def pix_to_world(xpix, ypix, xpos, ypos, yaw, world_size, scale):
 
 # Define a function to perform a perspective transform
 def perspect_transform(img, src, dst):
-           
     M = cv2.getPerspectiveTransform(src, dst)
     warped = cv2.warpPerspective(img, M, (img.shape[1], img.shape[0]))# keep same size as input image
-    
     return warped
-
 
 # Apply the above functions in succession and update the Rover state accordingly
 def perception_step(Rover):
