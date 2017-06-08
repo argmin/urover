@@ -92,6 +92,7 @@ def brake_control(Rover, hit):
     return Rover
 
 # If the rover is near the sample, stop do pickup, from there on stop mode is engaged
+# There is a race condition here while counting the rocks collected
 def pickup(Rover):
     if Rover.near_sample:
         Rover = brake_control(Rover, True)
